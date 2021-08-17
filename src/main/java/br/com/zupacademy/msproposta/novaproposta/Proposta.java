@@ -1,5 +1,7 @@
 package br.com.zupacademy.msproposta.novaproposta;
 
+import br.com.zupacademy.msproposta.associacartao.Cartao;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -20,6 +22,9 @@ public class Proposta {
 
     @Enumerated(EnumType.STRING)
     private StatusProposta statusProposta;
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Cartao cartao;
 
     @Deprecated
     public Proposta() {}
@@ -46,5 +51,9 @@ public class Proposta {
 
     public void setStatusProposta(StatusProposta statusProposta) {
         this.statusProposta = statusProposta;
+    }
+
+    public void associaCartao(Cartao cartao) {
+        this.cartao = cartao;
     }
 }
