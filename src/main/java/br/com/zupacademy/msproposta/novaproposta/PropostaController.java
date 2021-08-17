@@ -10,10 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
@@ -72,5 +69,19 @@ public class PropostaController {
             statusSolicitacao = StatusSolicitacao.COM_RESTRICAO;
             proposta.setStatusProposta(statusSolicitacao.normaliza());
         }
+    }
+
+    @Transactional
+    @GetMapping("/{id}")
+    public ResponseEntity<PropostaResponse> propostaPorId(@PathVariable Long id) {
+        logger.info("method=propostaPorId, msg=buscando proposta: {}", id);
+        Optional<Proposta> possivelProposta = propostaRepository.findById(id);
+        if (possivelProposta.isPresent()) {
+            Proposta proposta = possivelProposta.get();
+            return ResponseEntity.ok(new PropostaResponse(proposta));
+        }
+
+        logger.error("method=propostaPorId, msg=proposta: {} não encontrada", id);
+        return ResponseEntity.notFound().build();
     }
 }

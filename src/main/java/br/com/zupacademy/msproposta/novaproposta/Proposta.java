@@ -49,6 +49,22 @@ public class Proposta {
         return nome;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public BigDecimal getSalario() {
+        return salario;
+    }
+
+    public StatusProposta getStatusProposta() {
+        return statusProposta;
+    }
+
     public void setStatusProposta(StatusProposta statusProposta) {
         this.statusProposta = statusProposta;
     }
