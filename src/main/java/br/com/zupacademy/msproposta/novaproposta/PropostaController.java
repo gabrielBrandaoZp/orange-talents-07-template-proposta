@@ -5,6 +5,9 @@ import br.com.zupacademy.msproposta.novaproposta.externo.SolicitacaoAnaliseReque
 import br.com.zupacademy.msproposta.novaproposta.externo.SolicitacaoAnaliseResponse;
 import br.com.zupacademy.msproposta.novaproposta.externo.StatusSolicitacao;
 import br.com.zupacademy.msproposta.utils.exceptions.ApiErrorException;
+import br.com.zupacademy.msproposta.utils.handler.ApiErrorResponse;
+import br.com.zupacademy.msproposta.utils.handler.Resultado;
+import br.com.zupacademy.msproposta.utils.transacional.ExecutorDeTransacao;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,15 +26,16 @@ import java.util.Optional;
 public class PropostaController {
 
     private final PropostaRepository propostaRepository;
+    private final ExecutorDeTransacao executorDeTransacao;
     private final ApiAnaliseFinanceira apiAnaliseFinanceira;
     private final Logger logger = LoggerFactory.getLogger(PropostaController.class);
 
-    public PropostaController(PropostaRepository propostaRepository, ApiAnaliseFinanceira apiAnaliseFinanceira) {
+    public PropostaController(PropostaRepository propostaRepository, ExecutorDeTransacao executorDeTransacao, ApiAnaliseFinanceira apiAnaliseFinanceira) {
         this.propostaRepository = propostaRepository;
+        this.executorDeTransacao = executorDeTransacao;
         this.apiAnaliseFinanceira = apiAnaliseFinanceira;
     }
 
-    @Transactional
     @PostMapping
     public ResponseEntity<Void> novaProposta(@RequestBody @Valid NovaPropostaRequest request, UriComponentsBuilder uriBuilder) {
         logger.info("method=novaProposta, msg=cadastrando nova proposta");
@@ -44,7 +48,7 @@ public class PropostaController {
         }
 
         Proposta proposta = request.paraProposta();
-        propostaRepository.save(proposta);
+        executorDeTransacao.executaNaTransacao(() -> propostaRepository.save(proposta));
 
         tratarSolicitacaoAnaliseFinanceira(proposta);
 
@@ -65,9 +69,11 @@ public class PropostaController {
             SolicitacaoAnaliseResponse solicitacaoResponse = apiAnaliseFinanceira.verificaAnaliseFinanceira(solicitacaoRequest);
             statusSolicitacao = solicitacaoResponse.getResultadoSolicitacao();
             proposta.setStatusProposta(statusSolicitacao.normaliza());
+            executorDeTransacao.executaNaTransacao(() -> {
+                propostaRepository.save(proposta);
+            });
         } catch (FeignException fe) {
-            statusSolicitacao = StatusSolicitacao.COM_RESTRICAO;
-            proposta.setStatusProposta(statusSolicitacao.normaliza());
+            executorDeTransacao.executaNaTransacao(() -> proposta.setStatusProposta(StatusProposta.NAO_ELEGIVEL));
         }
     }
 
