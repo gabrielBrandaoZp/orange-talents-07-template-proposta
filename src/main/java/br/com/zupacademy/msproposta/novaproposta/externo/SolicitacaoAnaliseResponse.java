@@ -5,9 +5,9 @@ public class SolicitacaoAnaliseResponse {
     private String documento;
     private String nome;
     private StatusSolicitacao resultadoSolicitacao;
-    private Long idProposta;
+    private String idProposta;
 
-    public SolicitacaoAnaliseResponse(String documento, String nome, StatusSolicitacao resultadoSolicitacao, Long idProposta) {
+    public SolicitacaoAnaliseResponse(String documento, String nome, StatusSolicitacao resultadoSolicitacao, String idProposta) {
         this.documento = documento;
         this.nome = nome;
         this.resultadoSolicitacao = resultadoSolicitacao;

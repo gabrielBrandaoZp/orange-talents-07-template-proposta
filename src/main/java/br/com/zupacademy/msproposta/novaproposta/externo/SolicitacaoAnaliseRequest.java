@@ -10,12 +10,12 @@ public class SolicitacaoAnaliseRequest {
 
     private String documento;
     private String nome;
-    private Long idProposta;
+    private String idProposta;
 
     public SolicitacaoAnaliseRequest(Proposta proposta) {
         this.documento = proposta.getDocumento();
         this.nome = proposta.getNome();
-        this.idProposta = proposta.getId();
+        this.idProposta = proposta.getId().toString();
     }
 
     public String getDocumento() {
@@ -26,7 +26,7 @@ public class SolicitacaoAnaliseRequest {
         return nome;
     }
 
-    public Long getIdProposta() {
+    public String getIdProposta() {
         return idProposta;
     }
 }

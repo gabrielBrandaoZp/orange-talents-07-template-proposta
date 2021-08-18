@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -32,7 +31,6 @@ public class AssociaCartaoService {
         this.executorDeTransacao = executorDeTransacao;
     }
 
-    @Transactional
     @Scheduled(fixedDelayString = "${periodicidade.associa.cartao}")
     public void associaCartaoAProposta() {
         executorDeTransacao.executaNaTransacao(() -> {

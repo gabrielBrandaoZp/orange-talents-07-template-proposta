@@ -22,6 +22,33 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
 
+  db-propostas:
+    image: 'postgres:9.6-alpine'
+    container_name: db_propostas_local
+    volumes:
+      - propostas-volume:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db_proposta
+
+  proposta-webservice:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    container_name: propostas-webservice
+    image: brandaogabriel/propostas
+    ports:
+      - 8081:8080
+    depends_on:
+      - db-propostas
+    environment:
+      DATABASE_URL: "jdbc:postgresql://db_propostas_local:5432/db_proposta"
+      API_CONTA_URL: "http://contas:8888/"
+      API_FINANCEIRA_URL: "http://analise:9999/"
+
   postgres:
     image: 'postgres:9.6-alpine'
     volumes:
@@ -138,3 +165,11 @@ volumes:
   grafana-volume:
   prometheus-volume:
   postgres-volume:
+  propostas-volume:
+
+# This should be used when you want to communicate with other containers into a same network
+# PS: All containers in this file will be in the local-net
+#networks:
+#  default:
+#    external:
+#      name: local-net
