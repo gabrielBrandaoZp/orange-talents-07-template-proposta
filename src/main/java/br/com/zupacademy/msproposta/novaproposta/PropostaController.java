@@ -5,8 +5,6 @@ import br.com.zupacademy.msproposta.novaproposta.externo.SolicitacaoAnaliseReque
 import br.com.zupacademy.msproposta.novaproposta.externo.SolicitacaoAnaliseResponse;
 import br.com.zupacademy.msproposta.novaproposta.externo.StatusSolicitacao;
 import br.com.zupacademy.msproposta.utils.exceptions.ApiErrorException;
-import br.com.zupacademy.msproposta.utils.handler.ApiErrorResponse;
-import br.com.zupacademy.msproposta.utils.handler.Resultado;
 import br.com.zupacademy.msproposta.utils.transacional.ExecutorDeTransacao;
 import feign.FeignException;
 import org.slf4j.Logger;

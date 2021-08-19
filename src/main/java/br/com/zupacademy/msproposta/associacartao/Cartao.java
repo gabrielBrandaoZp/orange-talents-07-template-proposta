@@ -1,6 +1,7 @@
 package br.com.zupacademy.msproposta.associacartao;
 
 import br.com.zupacademy.msproposta.associacartao.externo.SolicitacaoCartaoResponse;
+import br.com.zupacademy.msproposta.criarbiometria.Biometria;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -40,6 +41,9 @@ public class Cartao {
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Vencimento vencimento;
+
+    @OneToMany(mappedBy = "cartao")
+    private Set<Biometria> biometrias;
 
     private String idProposta;
 
@@ -82,5 +86,9 @@ public class Cartao {
 
     public String getNumeroCartao() {
         return this.numeroCartao;
+    }
+
+    public void associaBiometria(Biometria biometria) {
+        this.biometrias.add(biometria);
     }
 }
