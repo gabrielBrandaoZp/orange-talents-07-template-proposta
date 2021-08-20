@@ -1,7 +1,10 @@
 package br.com.zupacademy.msproposta.associacartao;
 
 import br.com.zupacademy.msproposta.associacartao.externo.ApiContas;
+import br.com.zupacademy.msproposta.associacartao.externo.BloqueioRequest;
+import br.com.zupacademy.msproposta.associacartao.externo.BloqueioResponse;
 import br.com.zupacademy.msproposta.associacartao.externo.SolicitacaoCartaoResponse;
+import br.com.zupacademy.msproposta.bloqueiocartao.Bloqueio;
 import br.com.zupacademy.msproposta.novaproposta.Proposta;
 import br.com.zupacademy.msproposta.novaproposta.StatusProposta;
 import br.com.zupacademy.msproposta.utils.transacional.ExecutorDeTransacao;
@@ -15,17 +18,18 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @EnableScheduling
-public class AssociaCartaoService {
+public class CartaoService {
 
-    private final Logger logger = LoggerFactory.getLogger(AssociaCartaoService.class);
+    private final Logger logger = LoggerFactory.getLogger(CartaoService.class);
     private final ApiContas apiContas;
     private final EntityManager entityManager;
     private final ExecutorDeTransacao executorDeTransacao;
 
-    public AssociaCartaoService(ApiContas apiContas, EntityManager entityManager, ExecutorDeTransacao executorDeTransacao) {
+    public CartaoService(ApiContas apiContas, EntityManager entityManager, ExecutorDeTransacao executorDeTransacao) {
         this.apiContas = apiContas;
         this.entityManager = entityManager;
         this.executorDeTransacao = executorDeTransacao;
@@ -53,6 +57,22 @@ public class AssociaCartaoService {
                         }
                     }
             );
+        });
+    }
+
+    public void bloquearCartao(Cartao cartao, String ip, String userAgent) {
+        executorDeTransacao.executaNaTransacao(() -> {
+            try {
+                BloqueioResponse res = apiContas.bloquearCartao(cartao.getNumeroCartao(), new BloqueioRequest("propostas-webservice"));
+                Bloqueio bloqueio = new Bloqueio(ip, userAgent, cartao);
+                cartao.bloqueiaCartao();
+                entityManager.persist(bloqueio);
+                logger.info("method=bloquearCartao, msg=O status do cartão agora é: {}", res.getResultado());
+            } catch (FeignException.UnprocessableEntity feu) {
+                logger.error("method=bloquearCartao, msg=Não foi possivel bloquear o cartão: {}, pois o mesmo já se encontra bloqueado", cartao.getNumeroCartao());
+            } catch (FeignException fe) {
+                logger.error("method=bloquearCartao, msg=Não foi possivel bloquear o cartão: {}", cartao.getNumeroCartao());
+            }
         });
     }
 }

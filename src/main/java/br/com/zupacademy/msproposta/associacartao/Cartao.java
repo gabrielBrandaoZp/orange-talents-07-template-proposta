@@ -89,4 +89,11 @@ public class Cartao {
         this.statusCartao = StatusCartao.BLOQUEADO;
     }
 
+    public String getNumeroCartao() {
+        return numeroCartao;
+    }
+
+    public boolean isCartaoBloqueado(){
+        return this.statusCartao.equals(StatusCartao.BLOQUEADO);
+    }
 }
