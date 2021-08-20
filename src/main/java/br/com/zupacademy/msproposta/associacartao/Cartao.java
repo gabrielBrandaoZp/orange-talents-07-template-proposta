@@ -1,6 +1,7 @@
 package br.com.zupacademy.msproposta.associacartao;
 
 import br.com.zupacademy.msproposta.associacartao.externo.SolicitacaoCartaoResponse;
+import br.com.zupacademy.msproposta.avisoviagem.AvisoViagem;
 import br.com.zupacademy.msproposta.bloqueiocartao.Bloqueio;
 import br.com.zupacademy.msproposta.criarbiometria.Biometria;
 
@@ -28,8 +29,8 @@ public class Cartao {
     @OneToMany(mappedBy = "cartao")
     private Set<Bloqueio> bloqueios;
 
-    @OneToMany(mappedBy = "cartao", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<Aviso> avisos;
+    @OneToMany(mappedBy = "cartao")
+    private Set<AvisoViagem> avisos;
 
     @OneToMany(mappedBy = "cartao", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Carteira> carteiras;
@@ -62,10 +63,6 @@ public class Cartao {
         this.limite = response.getLimite();
         this.emitidoEm = response.getEmitidoEm();
 
-        if (!response.getAvisos().isEmpty()) {
-            this.avisos = response.getAvisos().stream().map(Aviso::new).collect(Collectors.toSet());
-        }
-
         if (!response.getCarteiras().isEmpty()) {
             this.carteiras = response.getCarteiras().stream().map(Carteira::new).collect(Collectors.toSet());
         }
@@ -93,7 +90,7 @@ public class Cartao {
         return numeroCartao;
     }
 
-    public boolean isCartaoBloqueado(){
+    public boolean isCartaoBloqueado() {
         return this.statusCartao.equals(StatusCartao.BLOQUEADO);
     }
 }
