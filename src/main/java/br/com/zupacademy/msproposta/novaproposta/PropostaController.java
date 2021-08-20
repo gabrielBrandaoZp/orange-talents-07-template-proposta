@@ -1,5 +1,6 @@
 package br.com.zupacademy.msproposta.novaproposta;
 
+import br.com.zupacademy.msproposta.metricas.MetricasPersonalizadas;
 import br.com.zupacademy.msproposta.novaproposta.externo.ApiAnaliseFinanceira;
 import br.com.zupacademy.msproposta.novaproposta.externo.SolicitacaoAnaliseRequest;
 import br.com.zupacademy.msproposta.novaproposta.externo.SolicitacaoAnaliseResponse;
@@ -27,11 +28,13 @@ public class PropostaController {
     private final ExecutorDeTransacao executorDeTransacao;
     private final ApiAnaliseFinanceira apiAnaliseFinanceira;
     private final Logger logger = LoggerFactory.getLogger(PropostaController.class);
+    private final MetricasPersonalizadas metricasPersonalizadas;
 
-    public PropostaController(PropostaRepository propostaRepository, ExecutorDeTransacao executorDeTransacao, ApiAnaliseFinanceira apiAnaliseFinanceira) {
+    public PropostaController(PropostaRepository propostaRepository, ExecutorDeTransacao executorDeTransacao, ApiAnaliseFinanceira apiAnaliseFinanceira, MetricasPersonalizadas metricasPersonalizadas) {
         this.propostaRepository = propostaRepository;
         this.executorDeTransacao = executorDeTransacao;
         this.apiAnaliseFinanceira = apiAnaliseFinanceira;
+        this.metricasPersonalizadas = metricasPersonalizadas;
     }
 
     @PostMapping
@@ -57,6 +60,8 @@ public class PropostaController {
 
         logger.info("method=novaProposta, msg=proposta: {} para o documento: {} cadastrada com sucesso",
                 proposta.getId(), proposta.getDocumento());
+
+        metricasPersonalizadas.contadorPropostasCriadas();
         return ResponseEntity.created(uri).build();
     }
 
@@ -82,6 +87,7 @@ public class PropostaController {
         Optional<Proposta> possivelProposta = propostaRepository.findById(id);
         if (possivelProposta.isPresent()) {
             Proposta proposta = possivelProposta.get();
+            metricasPersonalizadas.timerConsultarPropostas(id);
             return ResponseEntity.ok(new PropostaResponse(proposta));
         }
 

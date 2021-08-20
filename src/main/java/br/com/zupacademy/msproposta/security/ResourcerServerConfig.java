@@ -29,7 +29,7 @@ public class ResourcerServerConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(V1_ENDPOINTS)
                     .hasAuthority(ADMIN_ROLE_NAME)
                 .antMatchers(V1_ENDPOINTS_OBSERVABILITY)
-                    .hasAuthority(ADMIN_ROLE_NAME)
+                    .permitAll()
                 .anyRequest()
                     .authenticated()
                 .and()
