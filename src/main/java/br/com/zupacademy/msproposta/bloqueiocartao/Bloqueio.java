@@ -1,4 +1,6 @@
-package br.com.zupacademy.msproposta.associacartao;
+package br.com.zupacademy.msproposta.bloqueiocartao;
+
+import br.com.zupacademy.msproposta.associacartao.Cartao;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,24 +13,22 @@ public class Bloqueio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(unique = true)
-    private String apiId;
     private LocalDateTime bloqueadoEm;
-    private String sistemaResponsavel;
-    private boolean ativo;
+    private String ip;
+    private String userAgent;
 
     @ManyToOne
     private Cartao cartao;
 
     @Deprecated
-    public Bloqueio(){}
+    public Bloqueio() {
+    }
 
-    public Bloqueio(BloqueioResponse response) {
-        this.apiId = response.getId();
-        this.bloqueadoEm = response.getBloqueadoEm();
-        this.sistemaResponsavel = response.getSistemaResponsavel();
-        this.ativo = response.isAtivo();
+    public Bloqueio(String ip, String userAgent, Cartao cartao) {
+        this.bloqueadoEm = LocalDateTime.now();
+        this.ip = ip;
+        this.userAgent = userAgent;
+        this.cartao = cartao;
     }
 
     @Override

@@ -13,20 +13,18 @@ public class SolicitacaoCartaoResponse {
     private String idProposta;
     private BigDecimal limite;
     private LocalDateTime emitidoEm;
-    private Set<BloqueioResponse> bloqueios;
     private Set<AvisoResponse> avisos;
     private Set<CarteiraResponse> carteiras;
     private Set<ParcelaResponse> parcelas;
     private RenegociacaoResponse renegociacao;
     private VencimentoResponse vencimento;
 
-    public SolicitacaoCartaoResponse(String id, String titular, String idProposta, BigDecimal limite, Set<BloqueioResponse> bloqueios, Set<AvisoResponse> avisos,
+    public SolicitacaoCartaoResponse(String id, String titular, String idProposta, BigDecimal limite,  Set<AvisoResponse> avisos,
                                      Set<CarteiraResponse> carteiras, Set<ParcelaResponse> parcelas, RenegociacaoResponse renegociacao, VencimentoResponse vencimento, LocalDateTime emitidoEm) {
         this.id = id;
         this.titular = titular;
         this.idProposta = idProposta;
         this.limite = limite;
-        this.bloqueios = bloqueios;
         this.avisos = avisos;
         this.carteiras = carteiras;
         this.parcelas = parcelas;
@@ -53,10 +51,6 @@ public class SolicitacaoCartaoResponse {
 
     public LocalDateTime getEmitidoEm() {
         return emitidoEm;
-    }
-
-    public Set<BloqueioResponse> getBloqueios() {
-        return bloqueios;
     }
 
     public Set<AvisoResponse> getAvisos() {
