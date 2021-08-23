@@ -13,4 +13,7 @@ public interface ApiContas {
 
     @PostMapping("${analise.conta.bloqueia-cartao.endpoint}")
     BloqueioResponse bloquearCartao(@PathVariable String id, @RequestBody @Valid BloqueioRequest request);
+
+    @PostMapping("${analise.conta.aviso-viagem.endpoint}")
+    AvisoViagemResponseClient avisarViagemCartao(@PathVariable String id, @RequestBody @Valid AvisoViagemRequestClient request);
 }

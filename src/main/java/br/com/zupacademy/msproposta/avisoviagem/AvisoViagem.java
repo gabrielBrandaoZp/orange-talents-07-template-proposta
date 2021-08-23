@@ -35,6 +35,14 @@ public class AvisoViagem {
         this.cartao = cartao;
     }
 
+    public String getDestino() {
+        return destino;
+    }
+
+    public LocalDate getTerminaEm() {
+        return terminaEm;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

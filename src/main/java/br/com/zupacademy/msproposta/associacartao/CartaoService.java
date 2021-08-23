@@ -1,9 +1,7 @@
 package br.com.zupacademy.msproposta.associacartao;
 
-import br.com.zupacademy.msproposta.associacartao.externo.ApiContas;
-import br.com.zupacademy.msproposta.associacartao.externo.BloqueioRequest;
-import br.com.zupacademy.msproposta.associacartao.externo.BloqueioResponse;
-import br.com.zupacademy.msproposta.associacartao.externo.SolicitacaoCartaoResponse;
+import br.com.zupacademy.msproposta.associacartao.externo.*;
+import br.com.zupacademy.msproposta.avisoviagem.AvisoViagem;
 import br.com.zupacademy.msproposta.bloqueiocartao.Bloqueio;
 import br.com.zupacademy.msproposta.novaproposta.Proposta;
 import br.com.zupacademy.msproposta.novaproposta.StatusProposta;
@@ -72,5 +70,23 @@ public class CartaoService {
                 logger.error("method=bloquearCartao, msg=Não foi possivel bloquear o cartão: {}", cartao.getNumeroCartao());
             }
         });
+    }
+
+    public boolean avisarViagemCartao(Cartao cartao, AvisoViagem aviso) {
+        try {
+            executorDeTransacao.executaNaTransacao(() -> {
+                AvisoViagemResponseClient res = apiContas.avisarViagemCartao(cartao.getNumeroCartao(), new AvisoViagemRequestClient(aviso.getDestino(), aviso.getTerminaEm()));
+                cartao.avisarViagem(aviso);
+                entityManager.merge(cartao);
+                logger.info("method=avisarViagemCartao, msg=O aviso de cartão foi feito com sucesso, status: {}", res.getResultado());
+            });
+            return true;
+        } catch (FeignException.UnprocessableEntity feu) {
+            logger.error("method=avisarViagemCartao, msg=Não foi possivel realizar o aviso do cartão: {}, pois o mesmo já se encontra sobre aviso", cartao.getNumeroCartao());
+        } catch (FeignException fe) {
+            logger.error("method=avisarViagemCartao, msg=Não foi possivel realizar o aviso do cartão: {}", cartao.getNumeroCartao());
+        }
+
+        return false;
     }
 }
