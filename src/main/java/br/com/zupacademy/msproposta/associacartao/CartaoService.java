@@ -3,6 +3,7 @@ package br.com.zupacademy.msproposta.associacartao;
 import br.com.zupacademy.msproposta.associacartao.externo.*;
 import br.com.zupacademy.msproposta.avisoviagem.AvisoViagem;
 import br.com.zupacademy.msproposta.bloqueiocartao.Bloqueio;
+import br.com.zupacademy.msproposta.novacarteira.Carteira;
 import br.com.zupacademy.msproposta.novaproposta.Proposta;
 import br.com.zupacademy.msproposta.novaproposta.StatusProposta;
 import br.com.zupacademy.msproposta.utils.transacional.ExecutorDeTransacao;
@@ -85,6 +86,25 @@ public class CartaoService {
             logger.error("method=avisarViagemCartao, msg=Não foi possivel realizar o aviso do cartão: {}, pois o mesmo já se encontra sobre aviso", cartao.getNumeroCartao());
         } catch (FeignException fe) {
             logger.error("method=avisarViagemCartao, msg=Não foi possivel realizar o aviso do cartão: {}", cartao.getNumeroCartao());
+        }
+
+        return false;
+    }
+
+    public boolean cadastarCarteira(Cartao cartao, Carteira carteira) {
+        try {
+            executorDeTransacao.executaNaTransacao(() -> {
+                NovaCarteiraRequestClient req = new NovaCarteiraRequestClient(carteira.getEmail(), carteira.getTipo());
+                NovaCarteiraResponseClient res = apiContas.cadastrarCarteira(cartao.getNumeroCartao(), req);
+                entityManager.persist(carteira);
+                logger.info("method=cadastarCarteira, msg=Carteira de tipo {} criada com sucesso, status: {}", carteira.getTipo(), res.getResultado());
+            });
+            return true;
+        } catch (FeignException.UnprocessableEntity feu) {
+            logger.error("method=cadastarCarteira, msg=Não foi possivel criar uma carteira para esse cartão: {}, " +
+                    "pois o mesmo já está associado a uma carteira desse tipo", cartao.getNumeroCartao());
+        } catch (FeignException fe) {
+            logger.error("method=cadastarCarteira, msg=Não foi possivel criar uma carteira para o cartão: {}", cartao.getNumeroCartao());
         }
 
         return false;

@@ -16,4 +16,7 @@ public interface ApiContas {
 
     @PostMapping("${analise.conta.aviso-viagem.endpoint}")
     AvisoViagemResponseClient avisarViagemCartao(@PathVariable String id, @RequestBody @Valid AvisoViagemRequestClient request);
+
+    @PostMapping("${analise.conta.cadastra-carteira.endpoint}")
+    NovaCarteiraResponseClient cadastrarCarteira(@PathVariable String id, @RequestBody @Valid NovaCarteiraRequestClient request);
 }

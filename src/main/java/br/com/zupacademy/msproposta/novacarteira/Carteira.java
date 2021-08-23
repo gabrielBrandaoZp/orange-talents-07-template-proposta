@@ -1,7 +1,8 @@
-package br.com.zupacademy.msproposta.associacartao;
+package br.com.zupacademy.msproposta.novacarteira;
+
+import br.com.zupacademy.msproposta.associacartao.Cartao;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -12,23 +13,33 @@ public class Carteira {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String apiId;
-    private String email;
-    private LocalDateTime associadoEm;
-    private String emissor;
-
     @ManyToOne
     private Cartao cartao;
+
+    @Enumerated(EnumType.STRING)
+    private TipoCarteira tipo;
+
+    private String email;
 
     @Deprecated
     public Carteira(){}
 
-    public Carteira(CarteiraResponse response) {
-        this.apiId = response.getId();
-        this.email = response.getEmail();
-        this.associadoEm = response.getAssociadoEm();
-        this.emissor = response.getEmissor();
+    public Carteira(Cartao cartao, TipoCarteira tipo, String email) {
+        this.cartao = cartao;
+        this.tipo = tipo;
+        this.email = email;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getTipo() {
+        return tipo.toString();
     }
 
     @Override

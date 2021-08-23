@@ -4,6 +4,7 @@ import br.com.zupacademy.msproposta.associacartao.externo.SolicitacaoCartaoRespo
 import br.com.zupacademy.msproposta.avisoviagem.AvisoViagem;
 import br.com.zupacademy.msproposta.bloqueiocartao.Bloqueio;
 import br.com.zupacademy.msproposta.criarbiometria.Biometria;
+import br.com.zupacademy.msproposta.novacarteira.Carteira;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -32,7 +33,7 @@ public class Cartao {
     @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private Set<AvisoViagem> avisos;
 
-    @OneToMany(mappedBy = "cartao", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "cartao")
     private Set<Carteira> carteiras;
 
     @OneToMany(mappedBy = "cartao", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -62,10 +63,6 @@ public class Cartao {
         this.nomeTitular = response.getTitular();
         this.limite = response.getLimite();
         this.emitidoEm = response.getEmitidoEm();
-
-        if (!response.getCarteiras().isEmpty()) {
-            this.carteiras = response.getCarteiras().stream().map(Carteira::new).collect(Collectors.toSet());
-        }
 
         if (!response.getParcelas().isEmpty()) {
             this.parcelas = response.getParcelas().stream().map(Parcela::new).collect(Collectors.toSet());
