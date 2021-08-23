@@ -18,13 +18,12 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @EnableScheduling
 public class CartaoService {
-
     private final Logger logger = LoggerFactory.getLogger(CartaoService.class);
+
     private final ApiContas apiContas;
     private final EntityManager entityManager;
     private final ExecutorDeTransacao executorDeTransacao;
@@ -64,9 +63,8 @@ public class CartaoService {
         executorDeTransacao.executaNaTransacao(() -> {
             try {
                 BloqueioResponse res = apiContas.bloquearCartao(cartao.getNumeroCartao(), new BloqueioRequest("propostas-webservice"));
-                Bloqueio bloqueio = new Bloqueio(ip, userAgent, cartao);
-                cartao.bloqueiaCartao();
-                entityManager.persist(bloqueio);
+                cartao.bloqueiaCartao(new Bloqueio(ip, userAgent, cartao));
+                entityManager.merge(cartao);
                 logger.info("method=bloquearCartao, msg=O status do cartão agora é: {}", res.getResultado());
             } catch (FeignException.UnprocessableEntity feu) {
                 logger.error("method=bloquearCartao, msg=Não foi possivel bloquear o cartão: {}, pois o mesmo já se encontra bloqueado", cartao.getNumeroCartao());

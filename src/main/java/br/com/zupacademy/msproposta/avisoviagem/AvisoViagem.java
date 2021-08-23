@@ -23,6 +23,9 @@ public class AvisoViagem {
     @ManyToOne
     private Cartao cartao;
 
+    @Deprecated
+    public AvisoViagem() {}
+
     public AvisoViagem(String destino, LocalDate terminaEm, String ip, String userAgent, Cartao cartao) {
         this.destino = destino;
         this.terminaEm = terminaEm;

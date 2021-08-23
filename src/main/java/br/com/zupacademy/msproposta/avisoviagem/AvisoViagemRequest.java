@@ -3,7 +3,6 @@ package br.com.zupacademy.msproposta.avisoviagem;
 import br.com.zupacademy.msproposta.associacartao.Cartao;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;

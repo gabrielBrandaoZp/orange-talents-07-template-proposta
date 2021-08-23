@@ -26,10 +26,10 @@ public class Cartao {
     private BigDecimal limite;
     private LocalDateTime emitidoEm;
 
-    @OneToMany(mappedBy = "cartao")
+    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private Set<Bloqueio> bloqueios;
 
-    @OneToMany(mappedBy = "cartao")
+    @OneToMany(mappedBy = "cartao", cascade = CascadeType.MERGE)
     private Set<AvisoViagem> avisos;
 
     @OneToMany(mappedBy = "cartao", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -82,7 +82,8 @@ public class Cartao {
         this.idProposta = response.getIdProposta();
     }
 
-    public void bloqueiaCartao() {
+    public void bloqueiaCartao(Bloqueio bloqueio) {
+        this.bloqueios.add(bloqueio);
         this.statusCartao = StatusCartao.BLOQUEADO;
     }
 
@@ -92,5 +93,9 @@ public class Cartao {
 
     public boolean isCartaoBloqueado() {
         return this.statusCartao.equals(StatusCartao.BLOQUEADO);
+    }
+
+    public void avisarViagem(AvisoViagem avisoViagem) {
+        this.avisos.add(avisoViagem);
     }
 }

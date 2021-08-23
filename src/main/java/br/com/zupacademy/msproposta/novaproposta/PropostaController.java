@@ -21,13 +21,13 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/propostas")
+@RequestMapping("/api/v1")
 public class PropostaController {
+    private final Logger logger = LoggerFactory.getLogger(PropostaController.class);
 
     private final PropostaRepository propostaRepository;
     private final ExecutorDeTransacao executorDeTransacao;
     private final ApiAnaliseFinanceira apiAnaliseFinanceira;
-    private final Logger logger = LoggerFactory.getLogger(PropostaController.class);
     private final MetricasPersonalizadas metricasPersonalizadas;
 
     public PropostaController(PropostaRepository propostaRepository, ExecutorDeTransacao executorDeTransacao, ApiAnaliseFinanceira apiAnaliseFinanceira, MetricasPersonalizadas metricasPersonalizadas) {
@@ -37,7 +37,7 @@ public class PropostaController {
         this.metricasPersonalizadas = metricasPersonalizadas;
     }
 
-    @PostMapping
+    @PostMapping("/propostas")
     public ResponseEntity<Void> novaProposta(@RequestBody @Valid NovaPropostaRequest request, UriComponentsBuilder uriBuilder) {
         logger.info("method=novaProposta, msg=cadastrando nova proposta");
 
@@ -81,7 +81,7 @@ public class PropostaController {
     }
 
     @Transactional
-    @GetMapping("/{id}")
+    @GetMapping("/propostas/{id}")
     public ResponseEntity<PropostaResponse> propostaPorId(@PathVariable Long id) {
         logger.info("method=propostaPorId, msg=buscando proposta: {}", id);
         Optional<Proposta> possivelProposta = propostaRepository.findById(id);

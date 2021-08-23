@@ -1,6 +1,7 @@
 package br.com.zupacademy.msproposta.criarbiometria;
 
 import br.com.zupacademy.msproposta.associacartao.Cartao;
+import br.com.zupacademy.msproposta.associacartao.CartaoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -12,19 +13,19 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/biometrias")
+@RequestMapping("/api/v1")
 public class BiometriaController {
+    private final Logger logger = LoggerFactory.getLogger(BiometriaController.class);
 
     private final CartaoRepository cartaoRepository;
     private final BiometriaRepository biometriaRepository;
-    private final Logger logger = LoggerFactory.getLogger(BiometriaController.class);
 
     public BiometriaController(CartaoRepository cartaoRepository, BiometriaRepository biometriaRepository) {
         this.cartaoRepository = cartaoRepository;
         this.biometriaRepository = biometriaRepository;
     }
 
-    @PostMapping("/cartoes/{idCartao}")
+    @PostMapping("/cartoes/{idCartao}/biometrias")
     public ResponseEntity<Void> criarBiometria(@PathVariable Long idCartao, @Valid BiometriaRequest request, UriComponentsBuilder builder){
         logger.info("method=criarBiometria, msg=criando biometria");
 

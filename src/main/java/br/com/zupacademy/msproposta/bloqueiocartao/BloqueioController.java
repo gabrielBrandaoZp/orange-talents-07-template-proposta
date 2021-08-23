@@ -2,7 +2,7 @@ package br.com.zupacademy.msproposta.bloqueiocartao;
 
 import br.com.zupacademy.msproposta.associacartao.Cartao;
 import br.com.zupacademy.msproposta.associacartao.CartaoService;
-import br.com.zupacademy.msproposta.criarbiometria.CartaoRepository;
+import br.com.zupacademy.msproposta.associacartao.CartaoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/bloqueios/cartoes")
+@RequestMapping("/api/v1")
 public class BloqueioController {
     private final Logger logger = LoggerFactory.getLogger(BloqueioController.class);
 
@@ -26,7 +26,7 @@ public class BloqueioController {
         this.cartaoService = cartaoService;
     }
 
-    @PostMapping("/{idCartao}")
+    @PostMapping("/cartoes/{idCartao}/bloqueios")
     public ResponseEntity<Void> bloquearCartao(@PathVariable Long idCartao, @RequestHeader(value = "User-Agent") String userAgent,
                                                @RequestHeader(value = "ip") String ip) {
         logger.info("method=bloquearCartao, msg=bloqueando cartão de id {}", idCartao);

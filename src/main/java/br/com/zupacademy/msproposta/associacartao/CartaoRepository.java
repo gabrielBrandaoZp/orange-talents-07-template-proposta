@@ -1,6 +1,5 @@
-package br.com.zupacademy.msproposta.criarbiometria;
+package br.com.zupacademy.msproposta.associacartao;
 
-import br.com.zupacademy.msproposta.associacartao.Cartao;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CartaoRepository extends JpaRepository<Cartao, Long> {
