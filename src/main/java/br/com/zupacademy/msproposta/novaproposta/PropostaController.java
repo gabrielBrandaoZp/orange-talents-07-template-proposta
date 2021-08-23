@@ -8,6 +8,7 @@ import br.com.zupacademy.msproposta.novaproposta.externo.StatusSolicitacao;
 import br.com.zupacademy.msproposta.utils.exceptions.ApiErrorException;
 import br.com.zupacademy.msproposta.utils.transacional.ExecutorDeTransacao;
 import feign.FeignException;
+import io.opentracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,15 +31,20 @@ public class PropostaController {
     private final ApiAnaliseFinanceira apiAnaliseFinanceira;
     private final MetricasPersonalizadas metricasPersonalizadas;
 
-    public PropostaController(PropostaRepository propostaRepository, ExecutorDeTransacao executorDeTransacao, ApiAnaliseFinanceira apiAnaliseFinanceira, MetricasPersonalizadas metricasPersonalizadas) {
+    private final Tracer tracer;
+
+    public PropostaController(PropostaRepository propostaRepository, ExecutorDeTransacao executorDeTransacao, ApiAnaliseFinanceira apiAnaliseFinanceira, MetricasPersonalizadas metricasPersonalizadas, Tracer tracer) {
         this.propostaRepository = propostaRepository;
         this.executorDeTransacao = executorDeTransacao;
         this.apiAnaliseFinanceira = apiAnaliseFinanceira;
         this.metricasPersonalizadas = metricasPersonalizadas;
+        this.tracer = tracer;
     }
 
     @PostMapping("/propostas")
     public ResponseEntity<Void> novaProposta(@RequestBody @Valid NovaPropostaRequest request, UriComponentsBuilder uriBuilder) {
+        tracer.activeSpan().setTag("user.email", "joaozinho@email.com");
+
         logger.info("method=novaProposta, msg=cadastrando nova proposta");
 
         Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(request.getDocumento());
@@ -83,6 +89,8 @@ public class PropostaController {
     @Transactional
     @GetMapping("/propostas/{id}")
     public ResponseEntity<PropostaResponse> propostaPorId(@PathVariable Long id) {
+        tracer.activeSpan().setBaggageItem("cartao.id", id.toString());
+
         logger.info("method=propostaPorId, msg=buscando proposta: {}", id);
         Optional<Proposta> possivelProposta = propostaRepository.findById(id);
         if (possivelProposta.isPresent()) {
