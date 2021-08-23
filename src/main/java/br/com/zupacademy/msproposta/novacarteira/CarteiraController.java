@@ -36,6 +36,12 @@ public class CarteiraController {
         return processaCadastro(id, request, uriBuilder);
     }
 
+    @PostMapping("/cartoes/{id}/carteiras/samsung-pay")
+    public ResponseEntity<Map<String, Object>> cadastrarCarteiraPaypal(@PathVariable Long id, @RequestBody @Valid NovaCarteiraSamsungPayRequest request,
+                                                                       UriComponentsBuilder uriBuilder) {
+        return processaCadastro(id, request, uriBuilder);
+    }
+
     private ResponseEntity<Map<String, Object>> processaCadastro(Long id, NovaCarteiraRequest request, UriComponentsBuilder uriBuilder) {
         Optional<Cartao> possivelCartao = cartaoRepository.findById(id);
         if (possivelCartao.isEmpty()) {
@@ -68,7 +74,6 @@ public class CarteiraController {
         }
 
         URI uri = criarUriCarteira(uriBuilder, carteira.getId(), request.getTipoCarteira());
-
         return ResponseEntity.created(uri).build();
     }
 

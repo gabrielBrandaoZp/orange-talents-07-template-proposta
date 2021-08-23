@@ -2,5 +2,6 @@ package br.com.zupacademy.msproposta.novacarteira;
 
 public enum TipoCarteira {
 
-    PAYPAL;
+    PAYPAL,
+    SAMSUNG_PAY;
 }
