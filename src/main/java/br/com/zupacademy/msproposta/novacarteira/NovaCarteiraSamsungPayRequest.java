@@ -19,7 +19,7 @@ public class NovaCarteiraSamsungPayRequest implements NovaCarteiraRequest{
 
     @Override
     public Carteira paraCarteira(Cartao cartao) {
-        return new Carteira(cartao, TipoCarteira.SAMSUNG_PAY, email);
+        return new Carteira(cartao, TipoCarteira.SAMSUNGPAY, email);
     }
 
     @Override
@@ -29,6 +29,6 @@ public class NovaCarteiraSamsungPayRequest implements NovaCarteiraRequest{
 
     @Override
     public TipoCarteira getTipoCarteira() {
-        return TipoCarteira.SAMSUNG_PAY;
+        return TipoCarteira.SAMSUNGPAY;
     }
 }

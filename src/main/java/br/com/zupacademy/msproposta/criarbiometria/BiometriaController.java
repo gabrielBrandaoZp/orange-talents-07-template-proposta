@@ -2,6 +2,7 @@ package br.com.zupacademy.msproposta.criarbiometria;
 
 import br.com.zupacademy.msproposta.associacartao.Cartao;
 import br.com.zupacademy.msproposta.associacartao.CartaoRepository;
+import br.com.zupacademy.msproposta.utils.compartilhado.Metodos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +36,8 @@ public class BiometriaController {
             Biometria biometria = request.paraBiometria(cartao);
             biometriaRepository.save(biometria);
 
-            URI uri = builder
-                    .path("/api/v1/biometrias/{id}")
-                    .buildAndExpand(biometria.getId())
-                    .toUri();
-
             logger.info("method=criarBiometria, msg=biometria {} cadastrada com sucesso", request.getFingerprint());
+            URI uri = Metodos.criarUri(builder, "/api/v1/biometrias/{id}", biometria.getId());
             return ResponseEntity.created(uri).build();
         }
 

@@ -2,6 +2,7 @@ package br.com.zupacademy.msproposta.novaproposta;
 
 import br.com.zupacademy.msproposta.metricas.MetricasPersonalizadas;
 import br.com.zupacademy.msproposta.novaproposta.externo.*;
+import br.com.zupacademy.msproposta.utils.compartilhado.Metodos;
 import br.com.zupacademy.msproposta.utils.exceptions.ApiErrorException;
 import io.opentracing.Tracer;
 import org.slf4j.Logger;
@@ -51,15 +52,12 @@ public class PropostaController {
 
         analiseFinanceiraService.solicitarAnaliseFinanceira(proposta, request.getDocumento(), propostaRepository::save);
 
-        URI uri = uriBuilder
-                .path("/api/v1/propostas/{id}")
-                .buildAndExpand(proposta.getId())
-                .toUri();
-
         logger.info("method=novaProposta, msg=proposta: {} para o documento: {} cadastrada com sucesso",
                 proposta.getId(), proposta.getDocumento());
 
         metricasPersonalizadas.contadorPropostasCriadas();
+
+        URI uri = Metodos.criarUri(uriBuilder, "/api/v1/propostas/{id}", proposta.getId());
         return ResponseEntity.created(uri).build();
     }
 

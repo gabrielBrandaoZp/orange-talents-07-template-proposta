@@ -25,7 +25,7 @@ public class AvisoViagemController {
         this.cartaoRepository = cartaoRepository;
     }
 
-    @PostMapping("/cartoes/{id}/avisos-viagens")
+    @PostMapping("/cartoes/{id}/avisos")
     public ResponseEntity<Map<String, Object>> cadastrarAviso(@PathVariable Long id, @RequestBody @Valid AvisoViagemRequest request,
                                                @RequestHeader(value = "User-Agent") String userAgent,
                                                @RequestHeader(value = "ip") String ip) {
