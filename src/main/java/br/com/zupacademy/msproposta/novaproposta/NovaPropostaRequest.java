@@ -37,7 +37,7 @@ public class NovaPropostaRequest {
     }
 
     public Proposta paraProposta() {
-        return new Proposta(documento, email, nome, endereco, salario);
+        return new Proposta(new DocumentoLimpo(documento), email, nome, endereco, salario);
     }
 
     public String getDocumento() {

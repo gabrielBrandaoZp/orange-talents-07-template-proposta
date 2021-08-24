@@ -29,8 +29,8 @@ public class Proposta {
     @Deprecated
     public Proposta() {}
 
-    public Proposta(String documento, String email, String nome, String endereco, BigDecimal salario) {
-        this.documento = documento;
+    public Proposta(DocumentoLimpo documentoLimpo, String email, String nome, String endereco, BigDecimal salario) {
+        this.documento = documentoLimpo.hash();
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;

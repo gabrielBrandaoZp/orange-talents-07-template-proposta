@@ -3,7 +3,7 @@ package br.com.zupacademy.msproposta.novaproposta.externo;
 import br.com.zupacademy.msproposta.novaproposta.Proposta;
 
 /**
- * Os getters da classe foram gerados para que o objeto possa ser desserializado para JSON e possa ser enviado como corpo
+ * Os getters da classe foram gerados para que o objeto possa ser serializado para JSON e possa ser enviado como corpo
  * da requisição na chamada a api externa.
  */
 public class SolicitacaoAnaliseRequest {
