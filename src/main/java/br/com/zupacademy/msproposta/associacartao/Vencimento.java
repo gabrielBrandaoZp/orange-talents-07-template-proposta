@@ -1,5 +1,7 @@
 package br.com.zupacademy.msproposta.associacartao;
 
+import br.com.zupacademy.msproposta.associacartao.externo.VencimentoResponse;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 

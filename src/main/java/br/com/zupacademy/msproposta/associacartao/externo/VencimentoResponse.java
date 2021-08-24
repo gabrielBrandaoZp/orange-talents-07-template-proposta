@@ -1,4 +1,4 @@
-package br.com.zupacademy.msproposta.associacartao;
+package br.com.zupacademy.msproposta.associacartao.externo;
 
 import java.time.LocalDateTime;
 

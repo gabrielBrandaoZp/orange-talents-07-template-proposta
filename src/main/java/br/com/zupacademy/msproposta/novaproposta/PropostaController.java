@@ -1,13 +1,8 @@
 package br.com.zupacademy.msproposta.novaproposta;
 
 import br.com.zupacademy.msproposta.metricas.MetricasPersonalizadas;
-import br.com.zupacademy.msproposta.novaproposta.externo.ApiAnaliseFinanceira;
-import br.com.zupacademy.msproposta.novaproposta.externo.SolicitacaoAnaliseRequest;
-import br.com.zupacademy.msproposta.novaproposta.externo.SolicitacaoAnaliseResponse;
-import br.com.zupacademy.msproposta.novaproposta.externo.StatusSolicitacao;
+import br.com.zupacademy.msproposta.novaproposta.externo.*;
 import br.com.zupacademy.msproposta.utils.exceptions.ApiErrorException;
-import br.com.zupacademy.msproposta.utils.transacional.ExecutorDeTransacao;
-import feign.FeignException;
 import io.opentracing.Tracer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
@@ -27,16 +21,14 @@ public class PropostaController {
     private final Logger logger = LoggerFactory.getLogger(PropostaController.class);
 
     private final PropostaRepository propostaRepository;
-    private final ExecutorDeTransacao executorDeTransacao;
-    private final ApiAnaliseFinanceira apiAnaliseFinanceira;
+    private final AnaliseFinanceiraService analiseFinanceiraService;
     private final MetricasPersonalizadas metricasPersonalizadas;
-
     private final Tracer tracer;
 
-    public PropostaController(PropostaRepository propostaRepository, ExecutorDeTransacao executorDeTransacao, ApiAnaliseFinanceira apiAnaliseFinanceira, MetricasPersonalizadas metricasPersonalizadas, Tracer tracer) {
+    public PropostaController(PropostaRepository propostaRepository, AnaliseFinanceiraService analiseFinanceiraService,
+                              MetricasPersonalizadas metricasPersonalizadas, Tracer tracer) {
         this.propostaRepository = propostaRepository;
-        this.executorDeTransacao = executorDeTransacao;
-        this.apiAnaliseFinanceira = apiAnaliseFinanceira;
+        this.analiseFinanceiraService = analiseFinanceiraService;
         this.metricasPersonalizadas = metricasPersonalizadas;
         this.tracer = tracer;
     }
@@ -55,9 +47,9 @@ public class PropostaController {
         }
 
         Proposta proposta = request.paraProposta();
-        executorDeTransacao.executaNaTransacao(() -> propostaRepository.save(proposta));
+        propostaRepository.save(proposta);
 
-        tratarSolicitacaoAnaliseFinanceira(proposta);
+        analiseFinanceiraService.solicitarAnaliseFinanceira(proposta, request.getDocumento(), propostaRepository::save);
 
         URI uri = uriBuilder
                 .path("/api/v1/propostas/{id}")
@@ -71,22 +63,6 @@ public class PropostaController {
         return ResponseEntity.created(uri).build();
     }
 
-    private void tratarSolicitacaoAnaliseFinanceira(Proposta proposta) {
-        SolicitacaoAnaliseRequest solicitacaoRequest = new SolicitacaoAnaliseRequest(proposta);
-        StatusSolicitacao statusSolicitacao;
-        try{
-            SolicitacaoAnaliseResponse solicitacaoResponse = apiAnaliseFinanceira.verificaAnaliseFinanceira(solicitacaoRequest);
-            statusSolicitacao = solicitacaoResponse.getResultadoSolicitacao();
-            proposta.setStatusProposta(statusSolicitacao.normaliza());
-            executorDeTransacao.executaNaTransacao(() -> {
-                propostaRepository.save(proposta);
-            });
-        } catch (FeignException fe) {
-            executorDeTransacao.executaNaTransacao(() -> proposta.setStatusProposta(StatusProposta.NAO_ELEGIVEL));
-        }
-    }
-
-    @Transactional
     @GetMapping("/propostas/{id}")
     public ResponseEntity<PropostaResponse> propostaPorId(@PathVariable Long id) {
         tracer.activeSpan().setBaggageItem("cartao.id", id.toString());

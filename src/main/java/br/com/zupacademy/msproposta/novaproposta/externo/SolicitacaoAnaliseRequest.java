@@ -12,8 +12,8 @@ public class SolicitacaoAnaliseRequest {
     private String nome;
     private String idProposta;
 
-    public SolicitacaoAnaliseRequest(Proposta proposta) {
-        this.documento = proposta.getDocumento();
+    public SolicitacaoAnaliseRequest(Proposta proposta, String documentoSemCriptografia) {
+        this.documento = documentoSemCriptografia;
         this.nome = proposta.getNome();
         this.idProposta = proposta.getId().toString();
     }
