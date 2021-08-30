@@ -13,8 +13,8 @@ public class Proposta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String documento;
+    private String documentoEncriptado;
+    private String documentoHash;
     private String email;
     private String nome;
     private String endereco;
@@ -30,7 +30,8 @@ public class Proposta {
     public Proposta() {}
 
     public Proposta(DocumentoLimpo documentoLimpo, String email, String nome, String endereco, BigDecimal salario) {
-        this.documento = documentoLimpo.hash();
+        this.documentoEncriptado = documentoLimpo.encrypt();
+        this.documentoHash = documentoLimpo.hash();
         this.email = email;
         this.nome = nome;
         this.endereco = endereco;
@@ -41,8 +42,17 @@ public class Proposta {
         return id;
     }
 
-    public String getDocumento() {
-        return documento;
+    public String getDocumentoEncriptado() {
+        return documentoEncriptado;
+    }
+
+    public String getDocumentoHash() {
+        return documentoHash;
+    }
+
+    public String documentoDescriptografado() {
+        Criptografia documentoCriptografado = new Criptografia(this.documentoEncriptado);
+        return documentoCriptografado.documentoDescriptografado();
     }
 
     public String getNome() {

@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface PropostaRepository extends JpaRepository<Proposta, Long> {
 
-    Optional<Proposta> findByDocumento(String documento);
+    Optional<Proposta> findByDocumentoHash(String documentoHash);
 
     boolean existsByCartaoAndEmail(Cartao cartao, String email);
 }

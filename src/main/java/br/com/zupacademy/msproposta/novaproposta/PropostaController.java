@@ -1,7 +1,7 @@
 package br.com.zupacademy.msproposta.novaproposta;
 
 import br.com.zupacademy.msproposta.metricas.MetricasPersonalizadas;
-import br.com.zupacademy.msproposta.novaproposta.externo.*;
+import br.com.zupacademy.msproposta.novaproposta.externo.AnaliseFinanceiraService;
 import br.com.zupacademy.msproposta.utils.compartilhado.Metodos;
 import br.com.zupacademy.msproposta.utils.exceptions.ApiErrorException;
 import io.opentracing.Tracer;
@@ -40,7 +40,9 @@ public class PropostaController {
 
         logger.info("method=novaProposta, msg=cadastrando nova proposta");
 
-        Optional<Proposta> possivelProposta = propostaRepository.findByDocumento(request.getDocumento());
+        DocumentoLimpo documentoLimpo = new DocumentoLimpo(request.getDocumento());
+        String hashedDoc = documentoLimpo.hash();
+        Optional<Proposta> possivelProposta = propostaRepository.findByDocumentoHash(hashedDoc);
         if (possivelProposta.isPresent()) {
             logger.error("method=novaProposta, msg=a proposta não pode ser criada, documento: {} já existe na base",
                     request.getDocumento());
@@ -53,7 +55,7 @@ public class PropostaController {
         analiseFinanceiraService.solicitarAnaliseFinanceira(proposta, request.getDocumento(), propostaRepository::save);
 
         logger.info("method=novaProposta, msg=proposta: {} para o documento: {} cadastrada com sucesso",
-                proposta.getId(), proposta.getDocumento());
+                proposta.getId(), proposta.getDocumentoEncriptado());
 
         metricasPersonalizadas.contadorPropostasCriadas();
 
